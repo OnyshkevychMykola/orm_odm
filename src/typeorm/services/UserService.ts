@@ -1,29 +1,36 @@
+import { Repository } from 'typeorm';
 import { User } from '../models/User';
+import { typeormDataSource } from '../../db/typeorm';
 
 class UserService {
-    async createUser(username: string, email: string) {
+    private userRepository: Repository<User>;
+
+    constructor() {
+        this.userRepository = typeormDataSource.getRepository(User);
+    }
+
+    async createUser(username: string, email: string): Promise<User> {
         try {
-            const user = await User.create({ username, email });
-            return user;
+            const user = this.userRepository.create({ username, email });
+            return await this.userRepository.save(user);
         } catch (error) {
             console.error('Error creating user:', error);
             throw new Error('Error creating user');
         }
     }
 
-    async getAllUsers() {
+    async getAllUsers(): Promise<User[]> {
         try {
-            const users = await User.findAll();
-            return users;
+            return await this.userRepository.find();
         } catch (error) {
             console.error('Error fetching users:', error);
             throw new Error('Error fetching users');
         }
     }
 
-    async getUserById(id: number) {
+    async getUserById(id: number): Promise<User> {
         try {
-            const user = await User.findByPk(id);
+            const user = await this.userRepository.findOneBy({ id });
             if (!user) throw new Error('User not found');
             return user;
         } catch (error) {
@@ -32,25 +39,23 @@ class UserService {
         }
     }
 
-    async updateUser(id: number, username: string, email: string) {
+    async updateUser(id: number, username: string, email: string): Promise<User> {
         try {
-            const user = await User.findByPk(id);
+            const user = await this.userRepository.findOneBy({ id });
             if (!user) throw new Error('User not found');
             user.username = username;
             user.email = email;
-            await user.save();
-            return user;
+            return await this.userRepository.save(user);
         } catch (error) {
             console.error('Error updating user:', error);
             throw new Error('Error updating user');
         }
     }
 
-    async deleteUser(id: number) {
+    async deleteUser(id: number): Promise<{ message: string }> {
         try {
-            const user = await User.findByPk(id);
-            if (!user) throw new Error('User not found');
-            await user.destroy();
+            const result = await this.userRepository.delete(id);
+            if (result.affected === 0) throw new Error('User not found');
             return { message: 'User deleted successfully' };
         } catch (error) {
             console.error('Error deleting user:', error);

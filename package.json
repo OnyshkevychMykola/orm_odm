@@ -4,24 +4,31 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:sequelize": "nodemon src/index-sequelize.ts",
+    "dev:typeorm": "nodemon src/index-typeorm.ts",
+    "dev:prisma": "nodemon src/index-prisma.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.3.1",
     "express": "^4.21.2",
     "mongoose": "^8.9.5",
+    "nodemon": "^3.1.9",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
+    "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.5",
     "ts-node": "^10.9.2",
+    "typeorm": "^0.3.20",
     "typescript": "^5.7.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^22.10.7",
-    "@types/pg": "^8.11.10"
+    "@types/pg": "^8.11.10",
+    "prisma": "^6.3.1"
   }
 }

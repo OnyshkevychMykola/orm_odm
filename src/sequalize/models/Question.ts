@@ -1,5 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../db/postgres';
+import { sequelize } from '../../db/sequalize';
 
 class Question extends Model {}
 

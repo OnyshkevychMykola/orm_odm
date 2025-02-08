@@ -1,11 +1,14 @@
 import { Sequelize } from 'sequelize';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const sequelize = new Sequelize({
     dialect: 'postgres',
-    host: 'localhost',
-    username: '',
-    password: '',
-    database: '',
+    host: process.env.POSTGRES_HOST,
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASS,
+    database: process.env.POSTGRES_DB,
 });
 
 const connectPostgres = async () => {
