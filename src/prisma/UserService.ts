@@ -2,63 +2,60 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-class UserService {
+import { UserRepository } from "./repository/UserRepository";
+
+export class UserService {
+    private userRepo: UserRepository;
+
+    constructor(userRepo: UserRepository) {
+        this.userRepo = userRepo;
+    }
+
     async createUser(username: string, email: string) {
         try {
-            const user = await prisma.user.create({
-                data: { username, email },
-            });
-            return user;
+            return await this.userRepo.createUser(username, email);
         } catch (error) {
-            console.error('Error creating user:', error);
-            throw new Error('Error creating user');
+            console.error("Error creating user:", error);
+            throw new Error("Error creating user");
         }
     }
 
     async getAllUsers() {
         try {
-            return await prisma.user.findMany();
+            return await this.userRepo.getAllUsers();
         } catch (error) {
-            console.error('Error fetching users:', error);
-            throw new Error('Error fetching users');
+            console.error("Error fetching users:", error);
+            throw new Error("Error fetching users");
         }
     }
 
     async getUserById(id: number) {
         try {
-            const user = await prisma.user.findUnique({
-                where: { id },
-            });
-            if (!user) throw new Error('User not found');
+            const user = await this.userRepo.getUserById(id);
+            if (!user) throw new Error("User not found");
             return user;
         } catch (error) {
-            console.error('Error fetching user by ID:', error);
-            throw new Error('Error fetching user by ID');
+            console.error("Error fetching user by ID:", error);
+            throw new Error("Error fetching user by ID");
         }
     }
 
     async updateUser(id: number, username: string, email: string) {
         try {
-            const user = await prisma.user.update({
-                where: { id },
-                data: { username, email },
-            });
-            return user;
+            return await this.userRepo.updateUser(id, username, email);
         } catch (error) {
-            console.error('Error updating user:', error);
-            throw new Error('Error updating user');
+            console.error("Error updating user:", error);
+            throw new Error("Error updating user");
         }
     }
 
-    async deleteUser(id: number): Promise<{ message: string }> {
+    async deleteUser(id: number) {
         try {
-            await prisma.user.delete({
-                where: { id },
-            });
-            return { message: 'User deleted successfully' };
+            await this.userRepo.deleteUser(id);
+            return { message: "User deleted successfully" };
         } catch (error) {
-            console.error('Error deleting user:', error);
-            throw new Error('Error deleting user');
+            console.error("Error deleting user:", error);
+            throw new Error("Error deleting user");
         }
     }
 
@@ -92,5 +89,5 @@ class UserService {
     }
 
 }
-
-export const userService = new UserService();
+const userRepo = new UserRepository();
+export const userService = new UserService(userRepo);

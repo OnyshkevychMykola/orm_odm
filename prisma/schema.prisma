@@ -24,6 +24,8 @@ model Question {
   answer  String
   quest   Quest  @relation(fields: [questId], references: [id])
   questId Int
+
+  @@index([questId])
 }
 
 model User {
