@@ -76,6 +76,17 @@ class UserController {
             res.status(500).json({ error: (error as Error).message });
         }
     }
+
+    async deleteUserWithQuests(req: Request, res: Response) {
+        const { id } = req.params;
+        try {
+            const result = await userService.deleteUserWithQuests(Number(id));
+            res.status(200).json(result);
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ error: (error as Error).message });
+        }
+    }
 }
 
 export const userController = new UserController();

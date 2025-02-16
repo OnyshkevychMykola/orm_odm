@@ -61,6 +61,36 @@ class UserService {
             throw new Error('Error deleting user');
         }
     }
+
+    async deleteUserWithQuests(userId: number) {
+        return await prisma.$transaction(async (prisma) => {
+            const user = await prisma.user.findUnique({
+                where: { id: userId },
+                include: { quests: { include: { questions: true } } }
+            });
+
+            if (!user || user.quests.length === 0) {
+                throw new Error('User not found or has no quests. Transaction canceled.');
+            }
+
+            const questIds = user.quests.map(q => q.id);
+
+            await prisma.question.deleteMany({
+                where: { questId: { in: questIds } }
+            });
+
+            await prisma.quest.deleteMany({
+                where: { id: { in: questIds } }
+            });
+
+            await prisma.user.delete({
+                where: { id: userId }
+            });
+
+            return { message: 'User and related quests deleted successfully' };
+        });
+    }
+
 }
 
 export const userService = new UserService();

@@ -6,7 +6,8 @@
   "scripts": {
     "dev:sequelize": "nodemon src/index-sequelize.ts",
     "dev:typeorm": "nodemon src/index-typeorm.ts",
-    "dev:prisma": "nodemon src/index-prisma.ts"
+    "dev:prisma": "nodemon src/index-prisma.ts",
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

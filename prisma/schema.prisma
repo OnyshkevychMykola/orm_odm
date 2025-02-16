@@ -15,6 +15,7 @@ model Quest {
   description String?    @db.Text
   questions   Question[]
   users       User[]     @relation("UserQuests")
+  createdAt   DateTime  @default(now())
 }
 
 model Question {
