@@ -3,12 +3,15 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 import { UserRepository } from "./repository/UserRepository";
+import NodeCache from "node-cache";
 
 export class UserService {
     private userRepo: UserRepository;
+    private cache: NodeCache;
 
     constructor(userRepo: UserRepository) {
         this.userRepo = userRepo;
+        this.cache = new NodeCache();
     }
 
     async createUser(username: string, email: string) {
@@ -31,8 +34,16 @@ export class UserService {
 
     async getUserById(id: number) {
         try {
+            const cachedUser = this.cache.get(id.toString());
+            if (cachedUser) {
+                return cachedUser;
+            }
+
             const user = await this.userRepo.getUserById(id);
             if (!user) throw new Error("User not found");
+
+            this.cache.set(id.toString(), user, 3600);
+
             return user;
         } catch (error) {
             console.error("Error fetching user by ID:", error);
